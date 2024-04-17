@@ -14,8 +14,3 @@ var removeDuplicates = function (nums) {
        
     return nums.length;
 };
-
-nums = [-3,-3,-2,-1,-1,0,0,0,0,0];
-console.log(removeDuplicates(nums));
-
-console.log(nums);
