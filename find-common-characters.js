@@ -1,3 +1,5 @@
+// Problem: https://leetcode.com/problems/find-common-characters/
+
 /**
  * @param {string[]} words
  * @return {string[]}
@@ -13,13 +15,13 @@ var commonChars = function (words) {
         word = words[++wordInd]
     ) {
         // Looping through other words in words array.
-        for (let letter of word) {
-            let foundIndex = commonLetters.indexOf(letter);
+        for (let letter of commonLetters) {
+            let foundIndex = word.indexOf(letter);
             /* If the letter is found, add into nextCommonLetters
-            and delete from commonLetters to prevent it from being searched in the next iterations. */
+            and delete from present word to prevent it from being searched in the next iterations. */
             if (foundIndex !== -1) {
-                nextCommonLetters += commonLetters[foundIndex];
-                commonLetters = commonLetters.replace(letter, '');
+                nextCommonLetters += word[foundIndex];
+                word = word.replace(letter, '');
             }
         }
 
