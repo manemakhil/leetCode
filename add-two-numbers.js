@@ -12,33 +12,52 @@
  * @param {ListNode} l2
  * @return {ListNode}
  */
+const returnVal = lNode => lNode?.val === undefined ? 0 : lNode.val;
+
+const returnDigitAndCarry = (sum) => {
+    let carryOver = Math.floor(sum / 10);
+    let lnVal = carryOver === 0 ? sum : sum % 10;
+
+    return { lnVal, carryOver }
+}
+
 var addTwoNumbers = function (l1, l2) {
     let ln = { next: null }, lnTraveller = ln;
-    let l1traveller = l1, l2traveller = l2, carryOver = 0;
+    let carryOver = 0;
 
-    while (
-        l1traveller?.next !== undefined
-        || l2traveller?.next !== undefined
-    ) {
-        let thisDigitSum = (l1traveller?.val === undefined ? 0 : l1traveller?.val)
-            + (l2traveller?.val === undefined ? 0 : l2traveller?.val)
-            + carryOver;
+    do {
+        const val = returnDigitAndCarry(returnVal(l1) + returnVal(l2) + carryOver)
 
-        carryOver = Math.floor(thisDigitSum / 10);
-        lnVal = carryOver === 0 ? thisDigitSum : thisDigitSum % 10;
-
-        lnTraveller.next = { val: lnVal, next: null };
+        carryOver = val.carryOver;
+        lnTraveller.next = { val: val.lnVal, next: null };
 
         lnTraveller = lnTraveller.next;
 
-        l1traveller = l1traveller?.next;
-        l2traveller = l2traveller?.next;
+        l1 = l1.next;
+        l2 = l2.next;
+    } while (
+        l1 !== null
+        && l2 !== null
+    );
+
+    let lFinal = l1 !== null ? l1 : l2;
+
+    while (lFinal !== null) {
+        const val = returnDigitAndCarry(returnVal(lFinal) + carryOver);
+
+        lnTraveller.next = { val: val.lnVal, next: null };
+        carryOver = val.carryOver;
+
+        lnTraveller = lnTraveller.next;
+        lFinal = lFinal.next;
     }
 
     while (carryOver > 0) {
         lnTraveller.next = { val: carryOver % 10, next: null };
 
         carryOver = Math.floor(carryOver / 10);
+
+        lnTraveller = lnTraveller.next
     }
 
     return ln.next;
