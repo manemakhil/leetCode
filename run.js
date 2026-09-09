@@ -1,7 +1,8 @@
-let a = [1, 2, 3, 4];
+let a = 'abab';
 
-for(let b in a) {
-    a.splice(0, 1);
-
-    console.log(b, a[b])
+let sum;
+for(let n of a) {
+   sum ^=  n.charCodeAt(0);
 }
+
+console.log(sum);
