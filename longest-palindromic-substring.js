@@ -13,16 +13,13 @@ var longestPalindrome = function (s) {
             iter < s.length - windowLength + 1;
             iter++
         ) {
-            let startIndex = 0 + iter;
-            const midPointIndex = Math.floor(windowLength / 2),
-                endIndex = startIndex + windowLength - 1;
+            const startIndex = 0 + iter, endIndex = startIndex + windowLength - 1;
+            let startTraveller = startIndex, endTraveller = endIndex;
 
-            let oneHalf = '', otherHalf = '';
-            for (let innerWindowStart = 0; innerWindowStart < midPointIndex; innerWindowStart++) {
-                if (s[startIndex + innerWindowStart] !== s[endIndex - innerWindowStart]) continue windowIterator;
-            }
+            while(endTraveller > startTraveller) 
+                if (s[startTraveller++] !== s[endTraveller--]) continue windowIterator;
 
-            return s.substring(startIndex, endIndex + 1)
+            return s.substring(startIndex, endIndex + 1);
         }
 
         windowLength--;

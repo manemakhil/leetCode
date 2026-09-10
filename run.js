@@ -1,8 +1,6 @@
-let a = 'abab';
+let a = ['a', 'b', 3]
 
 let sum;
-for(let n of a) {
-   sum ^=  n.charCodeAt(0);
+for(let n in a) {
+   console.log(n);
 }
-
-console.log(sum);
