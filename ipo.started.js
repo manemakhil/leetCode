@@ -1,62 +1,84 @@
+// Problem: https://leetcode.com/problems/ipo
+
+/**
+ * @param {number} k
+ * @param {number} w
+ * @param {number[]} profits
+ * @param {number[]} capital
+ * @return {number}
+ */
 var findMaximizedCapital = function (k, w, profits, capital) {
-    /* Create a hash of captial: [profits],
-    implying for each captial, the profits in descinding order */
-    let capitalProfitHash = {}, thisCaptialProfitHash, append;
+    const captialProfitHash = {}, captialProfitHashArr = {};
+    let thisCaptialProfitHash;
 
     for (
-        let ind = 0, c = capital[ind], p = profits[ind];
-        ind < capital.length;
-        c = capital[++ind], p = profits[ind]
+        let i = 0, c = capital[i], p = profits[i];
+        i < capital.length;
+        ++i, c = capital[i], p = profits[i]
     ) {
-        // If profit is 0, we do not need it
-        if (p === 0) continue;
-
-        // For all captial <= w, we can have the same has reference (w)
-        if (c <= w) c = w;
-
-        thisCaptialProfitHash = capitalProfitHash[c];
+        thisCaptialProfitHash = captialProfitHash[c];
 
         if (thisCaptialProfitHash === undefined) {
-            capitalProfitHash[c] = [p];
-        } else {
-            append = true;
-            for (let pInd in thisCaptialProfitHash) {
-                if (p > thisCaptialProfitHash[pInd]) {
-                    thisCaptialProfitHash.splice(pInd, 0, p);
-                    append = false;
-                    break;
-                }
+            captialProfitHash[c] = {
+                [p]: 1
             };
-            append && thisCaptialProfitHash.push(p);
+        } else if (thisCaptialProfitHash[p] === undefined) {
+            thisCaptialProfitHash[p] = 1;
+        } else {
+            thisCaptialProfitHash[p]++;
         }
     }
 
-    // If there are no items within budget w, we are done
-    if (capitalProfitHash[w] === undefined) return w;
+    let workN = k, budget = w, c, maxCInd, maxCaptial, maxProfit, highestProfitInCaptial, profitsArr, maxCaptialProfitHash;
+    const captials = Object.keys(captialProfitHash);
+    let cLen = captials.length;
 
-    while (k--) {
-        // Find captial with max profit
-        let maxCKey, maxProfit = 0, done = true;
-        for (let cKey in capitalProfitHash) {
-            if (parseInt(cKey) > w) continue;
+    while (workN--) {
+        maxCaptial = undefined;
+        maxProfit = 0;
+        for (const cInd in captials) {
+            c = captials[cInd];
+            if (parseInt(c) <= budget) {
+                if (captialProfitHashArr[c] === undefined) {
+                    captialProfitHashArr[c] = Object.keys(captialProfitHash[c]);
+                }
 
-            done = false;
-            let thisProfit = capitalProfitHash[cKey][0];
+                profitsArr = captialProfitHashArr[c];
+                highestProfitInCaptial = parseInt(profitsArr[profitsArr.length - 1]);
 
-            if (thisProfit > maxProfit) {
-                maxProfit = thisProfit;
-                maxCKey = cKey;
+                if (highestProfitInCaptial > maxProfit) {
+                    maxCaptial = c;
+                    [maxCInd] = cInd;
+                    maxProfit = highestProfitInCaptial;
+                }
+            } else break;
+        }
+
+        // If there are no usable profits found for the budget, we are done
+        if (maxCaptial === undefined) break;
+
+        budget += maxProfit;
+
+        maxCaptialProfitHash = captialProfitHash[maxCaptial];
+        profitsArr = captialProfitHashArr[maxCaptial];
+
+        if (--maxCaptialProfitHash[maxProfit] === 0) {
+            profitsArr.pop();
+
+            if (profitsArr.length === 0) {
+                delete captialProfitHash[maxCaptial];
+                delete captialProfitHashArr[maxCaptial];
+                delete captials[maxCInd];
+
+                // If there are no more entries, break
+                if (--cLen === 0) break;
+            } else {
+                delete maxCaptialProfitHash[maxProfit];
             }
         }
-
-        // If none are within budget, we are done
-        if (done) return w;
-
-        // Remove the max profit (always first array element) from captialProfitHash reference and add it to w
-        w += capitalProfitHash[maxCKey].splice(0, 1)[0];
-        // Delete the used hash in-case there are no more profits
-        if (capitalProfitHash[maxCKey].length === 0) delete capitalProfitHash[maxCKey];
     }
 
-    return w;
+    return budget;
 };
+
+findMaximizedCapital(3, 0, [1, 2, 3], [0, 1, 2]);

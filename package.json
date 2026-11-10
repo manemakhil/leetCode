@@ -1,5 +1,5 @@
 {
     "scripts": {
-        "start": "node zigzag-conversion.js"
+        "start": "node ipo.started.js "
     }
 }
